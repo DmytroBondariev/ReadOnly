@@ -1,9 +1,10 @@
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser, IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from books.models import Book
+# from books.permissions import
 from books.serializers import (
     BookCreateSerializer,
     BookListSerializer,
@@ -21,7 +22,6 @@ class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all()
     pagination_class = BookPagination
     authentication_classes = (JWTAuthentication,)
-    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         title = self.request.query_params.get("title")
@@ -42,3 +42,11 @@ class BookViewSet(viewsets.ModelViewSet):
         elif self.action == "retrieve":
             return BookDetailSerializer
         return BookListSerializer
+
+    def get_permissions(self):
+        if self.action == "list":
+            return [IsAuthenticatedOrReadOnly()]
+        elif self.action == "retrieve":
+            return [IsAuthenticated()]
+        else:
+            return [IsAdminUser()]
