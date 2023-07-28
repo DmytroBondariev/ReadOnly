@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "drf_spectacular",
     "user",
-
+    "books",
 ]
 
 MIDDLEWARE = [
@@ -113,7 +113,7 @@ AUTH_USER_MODEL = "user.User"
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = "Kiev/Europe"
+TIME_ZONE = 'Europe/Kiev'
 
 USE_I18N = True
 
