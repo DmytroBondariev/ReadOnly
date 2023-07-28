@@ -16,11 +16,15 @@ class Book(models.Model):
         return self.title
 
     def save(self, *args, **kwargs):
-        existing_book = Book.objects.filter(title=self.title, author=self.author, cover=self.cover).first()
+        same_books_with_same_cover = Book.objects.filter(title=self.title, author=self.author, cover=self.cover)
+        existing_book = same_books_with_same_cover.first()
 
-        if existing_book:
+        if same_books_with_same_cover:
             self.inventory = existing_book.inventory + 1
+            for book in same_books_with_same_cover:
+                book.inventory += 1
+                book.save()
         else:
-            self.inventory = 0
+            self.inventory = 1
 
         super().save(*args, **kwargs)
