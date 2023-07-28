@@ -1,5 +1,7 @@
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from books.models import Book
 from books.serializers import (
@@ -18,6 +20,8 @@ class BookPagination(PageNumberPagination):
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all()
     pagination_class = BookPagination
+    authentication_classes = (JWTAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         title = self.request.query_params.get("title")
