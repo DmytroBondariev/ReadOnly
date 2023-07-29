@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from books.serializers import BookDetailBorrowingSerializer
-from borrowing.models import Borrowing
+from borrowings.models import Borrowing
 
 
 class BorrowingListSerializer(serializers.ModelSerializer):

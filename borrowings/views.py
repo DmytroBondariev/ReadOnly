@@ -1,8 +1,8 @@
 from rest_framework import mixins, viewsets
 from rest_framework.permissions import IsAuthenticated
 
-from borrowing.models import Borrowing
-from borrowing.serializers import BorrowingListSerializer, BorrowingDetailSerializer
+from borrowings.models import Borrowing
+from borrowings.serializers import BorrowingListSerializer, BorrowingDetailSerializer
 
 
 class BorrowingViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -20,4 +20,3 @@ class BorrowingViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewset
         if user.is_staff:
             return self.queryset
         return self.queryset.filter(user=user)
-
