@@ -12,7 +12,7 @@ class BorrowingListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Borrowing
-        fields = ("is_active", "book", "author", "borrow_date", "expected_return_date",)
+        fields = ("id", "is_active", "book", "author", "borrow_date", "expected_return_date",)
 
 
 class BorrowingDetailSerializer(serializers.ModelSerializer):
@@ -22,6 +22,7 @@ class BorrowingDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Borrowing
         fields = (
+            "id",
             "is_active",
             "user",
             "book",
@@ -44,7 +45,7 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
 
         """Check if the expected_return_date is not in the past"""
         expected_return_date = data["expected_return_date"]
-        if expected_return_date < date.today():
+        if expected_return_date <= date.today():
             raise serializers.ValidationError("Expected return date must be in the future.")
 
         return data
