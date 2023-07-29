@@ -4,7 +4,6 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser, I
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from books.models import Book
-# from books.permissions import
 from books.serializers import (
     BookCreateSerializer,
     BookListSerializer,

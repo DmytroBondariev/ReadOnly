@@ -11,5 +11,12 @@ class Borrowing(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    @property
+    def is_active(self):
+        return self.actual_return_date is None
+
     def __str__(self):
         return f"User(id: {self.user.id}) borrowed book({self.book.title}, id: {self.book.id})"
+
+    class Meta:
+        ordering = ["is_active", "-borrow_date"]
