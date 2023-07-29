@@ -22,7 +22,11 @@ class Book(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.title
+        return (
+            f"{self.title} by {self.author}, "
+            f"{self.cover} cover, {self.inventory} in stock, "
+            f"${self.daily_fee} per day"
+            )
 
     class Meta:
         ordering = ["title", "author", "cover"]
