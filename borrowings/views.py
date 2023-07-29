@@ -37,5 +37,7 @@ class BorrowingViewSet(
                 """Filter for inactive borrowings (actual_return_date is not None)"""
                 queryset = queryset.filter(actual_return_date__isnull=False)
         if user.is_staff:
+            if user_id:
+                queryset = queryset.filter(user_id=user_id)
             return queryset
         return queryset.filter(user=user)
