@@ -10,6 +10,7 @@ from user.serializers import UserSerializer
 
 class RegisterView(generics.CreateAPIView):
     serializer_class = UserSerializer
+    permission_classes = ()
 
 
 class ManageUserView(generics.RetrieveUpdateAPIView):
