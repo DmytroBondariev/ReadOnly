@@ -67,17 +67,18 @@ class BorrowingReturnBookSerializer(serializers.ModelSerializer):
         model = Borrowing
         fields = ()
 
-    def validate_actual_return_date(self, value):
-        """Check if the borrowing is not already returned"""
+    def update(self, instance, validated_data):
+        """Validate if the borrowing has already been returned"""
         if self.instance.actual_return_date:
             raise serializers.ValidationError("Borrowing has already been returned.")
-        return value
 
-    def update(self, instance, validated_data):
-        """Increase book inventory by 1 on returning"""
         instance.actual_return_date = date.today()
+
+        """Increase book inventory by 1"""
         book = instance.book
         book.inventory += 1
+
         book.save()
         instance.save()
+
         return instance
