@@ -53,9 +53,14 @@ class BorrowingViewSet(
     def return_book(self, request, pk=None):
         """Update borrowing with actual_return_date"""
         borrowing = self.get_object()
+
+        if borrowing.user != request.user:
+            return Response("You are not allowed to return this book.", status=status.HTTP_403_FORBIDDEN)
+
         serializer = self.get_serializer(borrowing, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
             return Response("Book returned successfully.")
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
