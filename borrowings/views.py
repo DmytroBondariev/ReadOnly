@@ -1,8 +1,13 @@
-from rest_framework import mixins, viewsets
+from datetime import date
+
+from rest_framework import mixins, viewsets, status
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from borrowings.models import Borrowing
-from borrowings.serializers import BorrowingListSerializer, BorrowingDetailSerializer, BorrowingCreateSerializer
+from borrowings.serializers import BorrowingListSerializer, BorrowingDetailSerializer, BorrowingCreateSerializer, \
+    BorrowingReturnBookSerializer
 
 
 class BorrowingViewSet(
@@ -21,6 +26,8 @@ class BorrowingViewSet(
             return BorrowingDetailSerializer
         if self.action == "create":
             return BorrowingCreateSerializer
+        if self.action == "return_book":
+            return BorrowingReturnBookSerializer
 
     def get_queryset(self):
         queryset = self.queryset
@@ -41,3 +48,19 @@ class BorrowingViewSet(
                 queryset = queryset.filter(user_id=user_id)
             return queryset
         return queryset.filter(user=user)
+
+    @action(detail=True, methods=["patch"])
+    def return_book(self, request, pk=None):
+        """Update borrowing with actual_return_date"""
+        borrowing = self.get_object()
+
+        if borrowing.user != request.user:
+            return Response("You are not allowed to return this book.", status=status.HTTP_403_FORBIDDEN)
+
+        serializer = self.get_serializer(borrowing, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response("Book returned successfully.")
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

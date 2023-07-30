@@ -12,7 +12,7 @@ class BorrowingListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Borrowing
-        fields = ("id", "is_active", "book", "author", "borrow_date", "expected_return_date",)
+        fields = ("id", "is_active", "book", "author", "borrow_date", "expected_return_date", "actual_return_date",)
 
 
 class BorrowingDetailSerializer(serializers.ModelSerializer):
@@ -60,3 +60,25 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
         user = self.context["request"].user
         borrowing = Borrowing.objects.create(user=user, **validated_data)
         return borrowing
+
+
+class BorrowingReturnBookSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Borrowing
+        fields = ()
+
+    def update(self, instance, validated_data):
+        """Validate if the borrowing has already been returned"""
+        if self.instance.actual_return_date:
+            raise serializers.ValidationError("Borrowing has already been returned.")
+
+        instance.actual_return_date = date.today()
+
+        """Increase book inventory by 1"""
+        book = instance.book
+        book.inventory += 1
+
+        book.save()
+        instance.save()
+
+        return instance
