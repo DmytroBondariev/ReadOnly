@@ -1,10 +1,15 @@
 import asyncio
+import os
+
 from aiogram import Bot
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 async def send_telegram_notification(message):
-    bot_token = "6155357404:AAG_oKggBJTFzJsOPokvQ1SwU5eqWMh34gk"
-    chat_id = 382864435
+    bot_token = os.environ.get("TELEGRAM_BOT_TOKEN")
+    chat_id = os.environ.get("TELEGRAM_CHAT_ID")
 
     bot = Bot(token=bot_token)
     await bot.send_message(chat_id=chat_id, text=message)

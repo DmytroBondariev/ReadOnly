@@ -1,3 +1,4 @@
+import asyncio
 from datetime import date
 
 from rest_framework import mixins, viewsets, status
@@ -8,6 +9,7 @@ from rest_framework.response import Response
 from borrowings.models import Borrowing
 from borrowings.serializers import BorrowingListSerializer, BorrowingDetailSerializer, BorrowingCreateSerializer, \
     BorrowingReturnBookSerializer
+from borrowings.telegram_helpers import send_telegram_notification
 
 
 class BorrowingViewSet(
@@ -28,6 +30,16 @@ class BorrowingViewSet(
             return BorrowingCreateSerializer
         if self.action == "return_book":
             return BorrowingReturnBookSerializer
+
+    def perform_create(self, serializer):
+        borrowing = serializer.save()
+
+        message = (
+            f"New borrowing created: "
+            f"User {borrowing.user.email} borrowed book '{borrowing.book.title}'. "
+            f"Expected return date: {borrowing.expected_return_date}."
+        )
+        asyncio.run(send_telegram_notification(message))
 
     def get_queryset(self):
         queryset = self.queryset
