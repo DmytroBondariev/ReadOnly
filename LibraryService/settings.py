@@ -191,11 +191,9 @@ CELERY_CACHE_BACKEND = "default"
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
 CELERY_BEAT_SCHEDULE = {
-    # Define your periodic tasks here
     'Check overdue borrowings': {
         'task': 'borrowings.tasks.check_overdue_borrowings',
-        'schedule': crontab(minute='*/1'),  # Run the task every minute
-        'args': None,  # Pass arguments to your task function if required
+        'schedule': crontab(hour="10", minute="0"),
+        'args': None,
     },
-    # Add more tasks here if needed
 }
