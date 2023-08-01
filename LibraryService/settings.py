@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from datetime import timedelta
 from pathlib import Path
+
+from celery.schedules import crontab
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -186,3 +188,14 @@ CACHES = {
 }
 
 CELERY_CACHE_BACKEND = "default"
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+
+CELERY_BEAT_SCHEDULE = {
+    # Define your periodic tasks here
+    'Check overdue borrowings': {
+        'task': 'borrowings.tasks.check_overdue_borrowings',
+        'schedule': crontab(minute='*/1'),  # Run the task every minute
+        'args': None,  # Pass arguments to your task function if required
+    },
+    # Add more tasks here if needed
+}
