@@ -29,5 +29,5 @@ def send_telegram_notification(message):
 
 @shared_task
 def say_hello():
-    print("Hello, world!")
     logger.info("Hello, world!")
+    return "Hello, world!"

@@ -176,3 +176,13 @@ CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 CELERY_BROKER_URL = "redis://127.0.0.1:16379/0"
 CELERY_IMPORTS = ('borrowings.tasks',)
+CELERY_RESULT_BACKEND = "django-db"
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://127.00.1:16379/1",
+    }
+}
+
+CELERY_CACHE_BACKEND = "default"
