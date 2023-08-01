@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from borrowings.models import Borrowing
 from borrowings.serializers import BorrowingListSerializer, BorrowingDetailSerializer, BorrowingCreateSerializer, \
     BorrowingReturnBookSerializer
-from borrowings.telegram_helpers import send_telegram_notification
+from borrowings.tasks import send_telegram_notification
 
 
 class BorrowingViewSet(
@@ -38,7 +38,7 @@ class BorrowingViewSet(
             f"User {borrowing.user.email} borrowed book '{borrowing.book.title}'. "
             f"Expected return date: {borrowing.expected_return_date}."
         )
-        asyncio.run(send_telegram_notification(message))
+        send_telegram_notification.delay(message)
 
     def get_queryset(self):
         queryset = self.queryset
