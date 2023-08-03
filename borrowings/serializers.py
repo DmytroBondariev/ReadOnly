@@ -9,8 +9,6 @@ from borrowings.models import Borrowing
 from payments.functions import create_stripe_session
 from payments.models import Payment
 
-from tasks import send_telegram_notification
-
 
 class BorrowingListSerializer(serializers.ModelSerializer):
     book = serializers.SlugRelatedField(slug_field="title", read_only=True)

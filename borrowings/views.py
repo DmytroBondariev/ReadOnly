@@ -6,8 +6,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from borrowings.models import Borrowing
-from borrowings.serializers import BorrowingListSerializer, BorrowingDetailSerializer, BorrowingCreateSerializer, \
+from borrowings.serializers import (
+    BorrowingListSerializer,
+    BorrowingDetailSerializer,
+    BorrowingCreateSerializer,
     BorrowingReturnBookSerializer
+)
 from borrowings.tasks import send_telegram_notification
 
 
