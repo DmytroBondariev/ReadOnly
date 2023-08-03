@@ -92,17 +92,37 @@ class BorrowingReturnBookSerializer(serializers.ModelSerializer):
         fields = ()
 
     def update(self, instance, validated_data):
+        overdue_days = (date.today() - instance.expected_return_date).days
         """Validate if the borrowing has already been returned"""
         if self.instance.actual_return_date:
             raise serializers.ValidationError("Borrowing has already been returned.")
+        if overdue_days > 0:
+            """Create a payment for the overdue borrowing"""
+            with transaction.atomic():
+                create_stripe_session(
+                    instance,
+                    self.context["request"],
+                    payment_type="FINE",
+                    overdue_days=overdue_days
+                )
+                instance.actual_return_date = date.today()
 
-        instance.actual_return_date = date.today()
+                """Increase book inventory by 1"""
+                book = instance.book
+                book.inventory += 1
 
-        """Increase book inventory by 1"""
-        book = instance.book
-        book.inventory += 1
+                book.save()
+                instance.save()
 
-        book.save()
-        instance.save()
+                return instance
+        else:
+            instance.actual_return_date = date.today()
 
-        return instance
+            """Increase book inventory by 1"""
+            book = instance.book
+            book.inventory += 1
+
+            book.save()
+            instance.save()
+
+            return instance
