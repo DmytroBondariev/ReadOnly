@@ -1,11 +1,15 @@
 from datetime import date
 
+from django.db import transaction
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from books.serializers import BookDetailBorrowingSerializer
 from borrowings.models import Borrowing
+from payments.functions import create_stripe_session
 from payments.models import Payment
+
+from tasks import send_telegram_notification
 
 
 class BorrowingListSerializer(serializers.ModelSerializer):
@@ -57,21 +61,29 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
 
         if pending_payments:
             raise ValidationError(
-                detail="You have one or more pending payments. "
-                       "You can't make borrowings until you pay for them."
+                detail="You have to pay for your previous borrowings first."
             )
         return data
 
     def create(self, validated_data):
-        """Decrease book inventory by 1"""
-        book = validated_data["book"]
-        book.inventory -= 1
-        book.save()
+        with transaction.atomic():
+            """Decrease book inventory by 1"""
+            book = validated_data["book"]
+            book.inventory -= 1
+            book.save()
 
-        """Attach the current user to the borrowing"""
-        user = self.context["request"].user
-        borrowing = Borrowing.objects.create(user=user, **validated_data)
-        return borrowing
+            """Attach the current user to the borrowing"""
+            user = self.context["request"].user
+            borrowing = Borrowing.objects.create(user=user, **validated_data)
+
+            """Create a payment for the borrowing"""
+            create_stripe_session(
+                borrowing, self.context["request"],
+                payment_type="PAYMENT",
+                overdue_days=0
+            )
+
+            return borrowing
 
 
 class BorrowingReturnBookSerializer(serializers.ModelSerializer):
