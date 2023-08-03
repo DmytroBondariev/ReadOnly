@@ -1,9 +1,11 @@
 from datetime import date
 
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from books.serializers import BookDetailBorrowingSerializer
 from borrowings.models import Borrowing
+from payments.models import Payment
 
 
 class BorrowingListSerializer(serializers.ModelSerializer):
@@ -40,6 +42,7 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
     def validate(self, data):
         """Check if the book inventory is not 0"""
         book = data["book"]
+        user = self.context["request"].user
         if book.inventory == 0:
             raise serializers.ValidationError("Book is not available for borrowing.")
 
@@ -48,6 +51,15 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
         if expected_return_date <= date.today():
             raise serializers.ValidationError("Expected return date must be in the future.")
 
+        pending_payments = Payment.objects.filter(borrowing__user=user).filter(
+            status="PENDING"
+        )
+
+        if pending_payments:
+            raise ValidationError(
+                detail="You have one or more pending payments. "
+                       "You can't make borrowings until you pay for them."
+            )
         return data
 
     def create(self, validated_data):
