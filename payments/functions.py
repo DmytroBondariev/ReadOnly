@@ -7,7 +7,7 @@ from rest_framework.reverse import reverse
 from borrowings.models import Borrowing
 from payments.models import Payment
 
-stripe.secret_key = os.getenv("STRIPE_SECRET_KEY")
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 FINE_MULTIPLIER = 2
 
 
@@ -33,7 +33,7 @@ def create_stripe_session(
     overdue_days,
 ):
     book = borrowing.book
-    if overdue_days is None:
+    if overdue_days == 0:
         days_borrowed = (
             borrowing.expected_return_date - borrowing.borrow_date
         ).days
