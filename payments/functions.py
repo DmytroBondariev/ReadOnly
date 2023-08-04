@@ -33,7 +33,7 @@ def create_stripe_session(
     overdue_days,
 ):
     book = borrowing.book
-    if overdue_days is None:
+    if overdue_days == 0:
         days_borrowed = (
             borrowing.expected_return_date - borrowing.borrow_date
         ).days
