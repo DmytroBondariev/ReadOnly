@@ -61,7 +61,7 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
             raise ValidationError(
                 detail="You have to pay for your previous borrowings first."
             )
-        return data
+        return super().validate(data)
 
     def create(self, validated_data):
         with transaction.atomic():
