@@ -1,5 +1,6 @@
 import asyncio
 
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import mixins, viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -63,6 +64,23 @@ class BorrowingViewSet(
                 queryset = queryset.filter(user_id=user_id)
             return queryset
         return queryset.filter(user=user)
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="is_active",
+                type=str,
+                description="Filter borrowings by active/inactive status"
+            ),
+            OpenApiParameter(
+                "user_id",
+                type=int,
+                description="Filter borrowings by user id: available only for admin users",
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
     @action(detail=True, methods=["patch"])
     def return_book(self, request, pk=None):

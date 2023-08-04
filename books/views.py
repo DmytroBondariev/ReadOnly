@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser, IsAuthenticated
@@ -49,3 +50,20 @@ class BookViewSet(viewsets.ModelViewSet):
             return [IsAuthenticated()]
         else:
             return [IsAdminUser()]
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="title",
+                type=str,
+                description="Filter books by title"
+            ),
+            OpenApiParameter(
+                name="author",
+                type=str,
+                description="Filter books by author"
+            )
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
