@@ -16,7 +16,15 @@ class BorrowingListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Borrowing
-        fields = ("id", "is_active", "book", "author", "borrow_date", "expected_return_date", "actual_return_date",)
+        fields = (
+            "id",
+            "is_active",
+            "book",
+            "author",
+            "borrow_date",
+            "expected_return_date",
+            "actual_return_date",
+        )
 
 
 class BorrowingDetailSerializer(serializers.ModelSerializer):
@@ -46,14 +54,20 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
         book = data["book"]
         user = self.context["request"].user
         if book.inventory == 0:
-            raise serializers.ValidationError("Book is not available for borrowing.")
+            raise serializers.ValidationError(
+                "Book is not available for borrowing."
+            )
 
         """Check if the expected_return_date is not in the past"""
         expected_return_date = data["expected_return_date"]
         if expected_return_date <= date.today():
-            raise serializers.ValidationError("Expected return date must be in the future.")
+            raise serializers.ValidationError(
+                "Expected return date must be in the future."
+            )
 
-        pending_payments = Payment.objects.filter(borrowing__user=user).filter(
+        pending_payments = Payment.objects.filter(
+            borrowing__user=user
+        ).filter(
             status="PENDING"
         )
 

@@ -20,7 +20,11 @@ class Payment(models.Model):
     money_to_pay = models.DecimalField(max_digits=8, decimal_places=2)
 
     def __str__(self):
-        return f"Payment ID: {self.pk}, Status: {self.status}, Type: {self.type}, Borrowing ID: {self.borrowing_id}"
+        return (f"Payment ID: {self.pk}, "
+                f"Status: {self.status}, "
+                f"Type: {self.type}, "
+                f"Borrowing ID: {self.borrowing_id}"
+                )
 
     class Meta:
         ordering = ["id"]

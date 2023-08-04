@@ -75,7 +75,8 @@ class BorrowingViewSet(
             OpenApiParameter(
                 "user_id",
                 type=int,
-                description="Filter borrowings by user id: available only for admin users",
+                description="Filter borrowings by user id: "
+                            "available only for admin users",
             ),
         ]
     )
@@ -88,9 +89,16 @@ class BorrowingViewSet(
         borrowing = self.get_object()
 
         if borrowing.user != request.user:
-            return Response("You are not allowed to return this book.", status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                "You are not allowed to return this book.",
+                status=status.HTTP_403_FORBIDDEN
+            )
 
-        serializer = self.get_serializer(borrowing, data=request.data, partial=True)
+        serializer = self.get_serializer(
+            borrowing,
+            data=request.data,
+            partial=True
+        )
 
         if serializer.is_valid():
             serializer.save()

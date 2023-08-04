@@ -26,7 +26,7 @@ class Book(models.Model):
             f"{self.title} by {self.author}, "
             f"{self.cover} cover, {self.inventory} in stock, "
             f"${self.daily_fee} per day"
-            )
+        )
 
     class Meta:
         ordering = ["title", "author", "cover"]

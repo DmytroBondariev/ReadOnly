@@ -16,7 +16,10 @@ class Borrowing(models.Model):
         return self.actual_return_date is None
 
     def __str__(self):
-        return f"User(id: {self.user.id}) borrowed book({self.book.title}, id: {self.book.id})"
+        return (f"User(id: {self.user.id}) "
+                f"borrowed book({self.book.title}, "
+                f"id: {self.book.id})"
+                )
 
     class Meta:
         ordering = ["-borrow_date"]
