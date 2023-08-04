@@ -7,7 +7,7 @@ from rest_framework.reverse import reverse
 from borrowings.models import Borrowing
 from payments.models import Payment
 
-stripe.secret_key = os.getenv("STRIPE_SECRET_KEY")
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 FINE_MULTIPLIER = 2
 
 

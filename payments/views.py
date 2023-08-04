@@ -54,3 +54,18 @@ class PaymentViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+    @action(
+        methods=["GET"],
+        detail=False,
+        url_path="cancel",
+        url_name="payment-cancel",
+    )
+    def cancel(self, request):
+        """Endpoint for canceled stripe payment session"""
+        session_id = request.query_params.get("session_id")
+        payment = Payment.objects.get(session_id=session_id)
+
+        serializer = PaymentListSerializer(payment)
+        data = serializer.data
+
+        return Response(data=data, status=status.HTTP_200_OK)
