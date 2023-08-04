@@ -76,7 +76,8 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
 
             """Create a payment for the borrowing"""
             create_stripe_session(
-                borrowing, self.context["request"],
+                borrowing,
+                self.context["request"],
                 payment_type="PAYMENT",
                 overdue_days=0
             )
