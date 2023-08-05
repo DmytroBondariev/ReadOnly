@@ -1,5 +1,3 @@
-import asyncio
-
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import mixins, viewsets, status
 from rest_framework.decorators import action
@@ -84,7 +82,7 @@ class BorrowingViewSet(
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-    @action(detail=True, methods=["patch"])
+    @action(detail=True, methods=["post"], url_path="return")
     def return_book(self, request, pk=None):
         """Update borrowing with actual_return_date"""
         borrowing = self.get_object()
