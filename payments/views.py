@@ -29,6 +29,7 @@ class PaymentViewSet(
             return PaymentListSerializer
         if self.action == "retrieve":
             return PaymentDetailSerializer
+        return PaymentListSerializer
 
     @action(
         methods=["GET"],
@@ -49,14 +50,9 @@ class PaymentViewSet(
                 partial=True
             )
 
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-
-            return Response(
-                serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(
         methods=["GET"],

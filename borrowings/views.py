@@ -34,6 +34,7 @@ class BorrowingViewSet(
             return BorrowingCreateSerializer
         if self.action == "return_book":
             return BorrowingReturnBookSerializer
+        return BorrowingListSerializer
 
     def perform_create(self, serializer):
         borrowing = serializer.save()
@@ -100,8 +101,6 @@ class BorrowingViewSet(
             partial=True
         )
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response("Book returned successfully.")
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response("Book returned successfully.")
