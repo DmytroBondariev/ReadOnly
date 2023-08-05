@@ -52,8 +52,7 @@ class BookViewSet(viewsets.ModelViewSet):
             return [IsAuthenticatedOrReadOnly()]
         elif self.action == "retrieve":
             return [IsAuthenticated()]
-        else:
-            return [IsAdminUser()]
+        return [IsAdminUser()]
 
     @extend_schema(
         parameters=[
