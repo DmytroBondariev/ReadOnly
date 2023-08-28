@@ -1,4 +1,3 @@
-import asyncio
 import os
 
 from aiogram import Bot, Dispatcher, types, executor
@@ -10,9 +9,10 @@ BOT = Bot(token=os.environ.get("TELEGRAM_BOT_TOKEN"))
 dp = Dispatcher(BOT)
 
 
-@dp.message_handler(commands=["id"])
+@dp.message_handler(commands=["start"])
 async def get_chat_id(message: types.Message):
-    await message.answer(text=message.from_user.id)
+    await message.answer(text=f"Your chat id is:")
+    await message.answer(message.chat.id)
 
 
 async def send_telegram_notification(message):
