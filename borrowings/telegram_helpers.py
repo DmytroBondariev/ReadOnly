@@ -11,7 +11,7 @@ dp = Dispatcher(BOT)
 
 @dp.message_handler(commands=["start"])
 async def get_chat_id(message: types.Message):
-    await message.answer(text=f"Your chat id is:")
+    await message.answer(text="Your chat id is:")
     await message.answer(message.chat.id)
 
 
