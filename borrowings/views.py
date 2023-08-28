@@ -42,7 +42,7 @@ class BorrowingViewSet(
             f"User {borrowing.user.email} borrowed book '{borrowing.book.title}'. "
             f"Expected return date: {borrowing.expected_return_date}."
         )
-        send_telegram_notification.delay(message)
+        send_telegram_notification(message)
 
     def get_queryset(self):
         queryset = self.queryset

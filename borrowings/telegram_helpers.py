@@ -1,10 +1,18 @@
-import asyncio
 import os
 
-from aiogram import Bot
+from aiogram import Bot, Dispatcher, types, executor
 from dotenv import load_dotenv
 
 load_dotenv()
+
+BOT = Bot(token=os.environ.get("TELEGRAM_BOT_TOKEN"))
+dp = Dispatcher(BOT)
+
+
+@dp.message_handler(commands=["start"])
+async def get_chat_id(message: types.Message):
+    await message.answer(text=f"Your chat id is:")
+    await message.answer(message.chat.id)
 
 
 async def send_telegram_notification(message):
@@ -21,5 +29,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    executor.start_polling(dp, skip_updates=True)
